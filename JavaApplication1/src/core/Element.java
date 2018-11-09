@@ -1,9 +1,15 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package core;
 
-
-import java.awt.Dimension;
-import java.awt.Graphics;
+import core.manager.View.ViewAction;
+import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -11,125 +17,80 @@ import java.awt.Point;
  */
 public class Element implements IGame
 {
-    protected Point origin;
-    protected Dimension size;
-    protected Dimension offSet;
-    protected Element parent;
+    List<Point> extrems;
+    int[] innerX;
+    int[] innerY;
     
-    protected boolean visible;
-    protected boolean dead;
+    public int realX;
+    public int realY;
     
-    public Element(int w, int h)
+    public int x;
+    public int y;
+    public int z;
+    public int width;
+    public int height;
+    public int depth;
+    
+    public Element()
     {
-        origin  = new Point(0,0);
-        size    = new Dimension(w,h);
-        visible = true;
-        dead    = false;
-        offSet  = new Dimension(0,0);
+        realX = 0;
+        realY = 0;
+        x = 0;
+        y = 0;
+        z = 0;
+        width  = 0;
+        height = 0;
+        depth  = 0;
+        extrems = new ArrayList();
+        innerX  = new int[4];
+        innerY  = new int[4];
     }
-    
-    public Element(int x, int y, int w, int h)
-    {
-        origin  = new Point(x,y);
-        size    = new Dimension(w,h);
-        visible = true;
-        dead    = false;
-        offSet  = new Dimension(0,0);
-    }
-    
-    protected int getPaintX()
-    {
-        if(parent == null) return origin.x + offSet.width;
-        return parent.origin.x + parent.offSet.width + origin.x + offSet.width;
-    }
-    
-    protected int getPaintY()
-    {
-        if(parent == null) return origin.y + offSet.height;
-        return parent.origin.y + parent.offSet.height + origin.y + offSet.height;
-    }
-    
-    public Point getCenter()
-    {
-        return new Point(origin.x+size.width/2, origin.y+size.height/2);
-    }
-    
-    @Override
+
     public void load()
     {
+        extrems.add(new Point(realX + width/2, realY));
+        extrems.add(new Point(realX,           realY - height/2));
+        extrems.add(new Point(realX - width/2, realY));
+        extrems.add(new Point(realX,           realY + height/2));
         
+        innerX[0] = extrems.get(0).x-1;
+        innerY[0] = extrems.get(0).y;
+        innerX[1] = extrems.get(1).x;
+        innerY[1] = extrems.get(1).y+1;
+        innerX[2] = extrems.get(2).x+1;
+        innerY[2] = extrems.get(2).y;
+        innerX[3] = extrems.get(3).x;
+        innerY[3] = extrems.get(3).y-1;
     }
     
-    @Override
     public void update()
     {
+        extrems.get(0).x = realX + width/2;
+        extrems.get(1).y = realY - height/2;
+        extrems.get(2).x = realX - width/2;
+        extrems.get(3).y = realY + height/2;
         
+        innerX[0] = extrems.get(0).x-1;
+        innerY[0] = extrems.get(0).y;
+        innerX[1] = extrems.get(1).x;
+        innerY[1] = extrems.get(1).y+1;
+        innerX[2] = extrems.get(2).x+1;
+        innerY[2] = extrems.get(2).y;
+        innerX[3] = extrems.get(3).x;
+        innerY[3] = extrems.get(3).y-1;
     }
-
-    @Override
-    public void paint(Graphics g)
+    
+    public void draw(ViewAction v)
     {
-        if(visible)
-        {
-            
-        }
-    }
-    
-    public void drawLine(Graphics g, Point p1, Point p2)
-    {
-        g.drawLine(p1.x, p1.y, p2.x, p2.y);
-    }
-    
-    public void paintCenter(Graphics g)
-    {
-        g.drawRect(origin.x+size.width/2, origin.y+size.height/2, 1,1);
-    }
-    
-    public Point getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(Point origin) {
-        this.origin = origin;
-    }
-
-    public Dimension getSize() {
-        return size;
-    }
-
-    public void setSize(Dimension size) {
-        this.size = size;
-    }
-
-    public Dimension getOffSet() {
-        return offSet;
-    }
-
-    public void setOffSet(Dimension offSet) {
-        this.offSet = offSet;
-    }
-    
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public boolean isDead() {
-        return dead;
-    }
-
-    public void setDead(boolean dead) {
-        this.dead = dead;
-    }
-
-    public Element getParent() {
-        return parent;
-    }
-
-    public void setParent(Element parent) {
-        this.parent = parent;
+        
+        v.setColor(Color.LIGHT_GRAY);
+        v.fillPolygon(innerX, innerY);
+        
+        v.setColor(Color.GRAY);
+        v.drawPoint(realX, realY);
+        v.drawLine(extrems.get(0), extrems.get(1));
+        v.drawLine(extrems.get(1), extrems.get(2));
+        v.drawLine(extrems.get(2), extrems.get(3));
+        v.drawLine(extrems.get(3), extrems.get(0));
     }
 }

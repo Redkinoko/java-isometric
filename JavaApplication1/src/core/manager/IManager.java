@@ -1,21 +1,16 @@
-package core;
-
-import core.manager.View.ViewAction;
-import java.awt.Graphics;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package core.manager;
 
 /**
  *
  * @author Red
  */
-public interface IGame
+public interface IManager
 {
-    public void load();
-    public void update();
-    public void draw(ViewAction v);
+    public void start();
+    public void stop();
 }
