@@ -6,9 +6,13 @@
 package core.manager.View;
 
 import core.Data;
+import core.Element;
 import core.IGame;
+import core.controls.MouseController;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,20 +23,33 @@ import javax.swing.JPanel;
  */
 public class View extends JPanel
 {
-    private List<IGame> elements;
+    private List<IGame> drawables;
     private int offSetX;
     private int offSetY;
     private JFrame frame;
-    private ViewAction va;
+    private drawAction viewAction;
+    private MouseController mouse;
     
-    public View(List<IGame> elts)
+    public View(drawAction va, MouseController m, List<IGame> draws)
     {
         super();
-        frame   = new JFrame();
+        viewAction = va;
+        drawables  = draws;
+        mouse      = m;
+        offSetX    = 20;
+        offSetY    = 50;
+        frame      = new JFrame();
+    }
+    
+    private void setFrameSize(int width, int height)
+    {
+        frame.setSize(width + offSetX, height + offSetY);
+        setSize(width,height);
+    }
+    
+    public void load()
+    {
         frame.add(this);
-        offSetX = 20;
-        offSetY = 50;
-        setFrameSize(Data.WIN_WIDTH, Data.WIN_HEIGHT);
         frame.addWindowListener(
             new java.awt.event.WindowAdapter()
             {
@@ -43,25 +60,19 @@ public class View extends JPanel
                 }
             }
         );
-        va = new ViewAction();
-        elements = elts;
-        this.setBackground(Color.DARK_GRAY);
-    }
-    
-    private void setFrameSize(int width, int height)
-    {
-        frame.setSize(width + offSetX, height + offSetY);
-        setSize(width,height);
+        this.addMouseListener(mouse);
+        setBackground(Color.DARK_GRAY);
+        setFrameSize(Data.WIN_WIDTH, Data.WIN_HEIGHT);
     }
     
     @Override
     public void paint(Graphics g)
     {
         super.paint(g);
-        va.g = g;
-        for(IGame e:elements)
+        viewAction.g = g;
+        for(IGame d:drawables)
         {
-            e.draw(va);
+            d.draw(viewAction);
         }
     }
     

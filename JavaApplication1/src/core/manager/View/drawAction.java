@@ -8,17 +8,23 @@ package core.manager.View;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Polygon;
 
 /**
  *
  * @author Red
  */
-public class ViewAction
+public class drawAction
 {
     public Graphics g;
-    public ViewAction()
+    public drawAction()
     {
         
+    }
+    
+    public void setColor(Color c)
+    {
+        g.setColor(c);
     }
     
     public void drawLine(Point p1, Point p2)
@@ -31,7 +37,6 @@ public class ViewAction
         g.drawLine(x1, y1, x2, y2);
     }
     
-    
     public void drawPoint(int x, int y)
     {
         g.drawRect(x, y, 1, 1);
@@ -41,14 +46,24 @@ public class ViewAction
     {
         g.drawRect(x, y, width, height);
     }
-
+    
+    public void drawPolygon(int[] x, int[] y)
+    {
+        g.drawPolygon(x, y, x.length);
+    }
+    
+    public void drawPolygon(Polygon shape)
+    {
+        g.drawPolygon(shape);
+    }
+    
     public void fillPolygon(int[] x, int[] y)
     {
         g.fillPolygon(x, y, x.length);
     }
     
-    public void setColor(Color c)
+    public void fillPolygon(Polygon shape)
     {
-        g.setColor(c);
+        g.fillPolygon(shape);
     }
 }

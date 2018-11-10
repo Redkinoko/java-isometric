@@ -1,10 +1,11 @@
 package core;
 
+import core.controls.MouseController;
 import core.manager.DrawManager;
-import core.manager.View.ViewAction;
+import core.manager.Core;
+import core.manager.View.drawAction;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,29 +14,31 @@ import java.util.List;
  */
 public class Board implements IGame
 {
+    public static final Dimension STEP = new Dimension(Data.QUAD_SIZE, Data.QUAD_SIZE/2);
     private int x;
     private int y;
     private int width;
     private int height;
     private Element origin;
-    public static final Dimension step = new Dimension(Data.QUAD_SIZE, Data.QUAD_SIZE/2);
-    private List<IGame> elements;
+    private List<Element> elements;
+    private MouseController mouse;
     
-    public Board() 
+    public Board(MouseController m, List<Element> e) 
     {
-        x      = Data.WIN_WIDTH_2-Data.WIN_HEIGHT/2;
-        y      = Data.WIN_HEIGHT_2-Data.WIN_HEIGHT/2;
-        width  = Data.WIN_HEIGHT;
-        height = Data.WIN_HEIGHT;
-        origin = new Element();
+        mouse    = m;
+        elements = e;
+        x        = Data.WIN_WIDTH_2-Data.WIN_HEIGHT/2;
+        y        = Data.WIN_HEIGHT_2-Data.WIN_HEIGHT/2;
+        width    = Data.WIN_HEIGHT;
+        height   = Data.WIN_HEIGHT;
+        origin   = new Element();
         origin.realX = x+width/2;
-        origin.realY = y+height-step.height/2;
+        origin.realY = y+height-STEP.height/2;
         origin.x = 0;
         origin.y = 0;
         origin.z = 0;
-        origin.width  = step.width;
-        origin.height = step.height;
-        elements = new ArrayList();
+        origin.width  = STEP.width;
+        origin.height = STEP.height;
     }
 
     @Override
@@ -49,7 +52,7 @@ public class Board implements IGame
                 elements.add(getElementByAxis(i,j,0));
             }
         }
-        for(IGame i:elements)
+        for(Element i:elements)
         {
             i.load();
         }
@@ -58,35 +61,50 @@ public class Board implements IGame
     @Override
     public void update() 
     {
-        for(IGame e:elements)
+        for(Element e:elements)
         {
             e.update();
+            if(e.isClicked)
+            {
+                if(e.isSelected)
+                {
+                    //TEST
+                    e.depth += 10;
+                    //TEST
+                    e.unselected();
+                }
+                else
+                {
+                    e.selected();
+                }
+            }
+            e.reset();
         }
     }
     
     @Override
-    public void draw(ViewAction v)
+    public void draw(drawAction v)
     {
         
         v.setColor(Color.red);
         v.drawPoint(origin.realX, origin.realY);
         
-        for(IGame e:elements)
+        for(int i=(elements.size()-1) ; i>=0 ; i--)
         {
-            e.draw(v);
+            elements.get(i).draw(v);
         }
     }
     
     public Element getElementByAxis(int x, int y, int z)
     {
         Element e = new Element();
-        e.realX  = origin.realX + step.width/2*(x-y);
-        e.realY  = origin.realY - (step.height*x) + (step.height/2*(x-y));
+        e.realX  = origin.realX + STEP.width/2*(x-y);
+        e.realY  = origin.realY - (STEP.height*x) + (STEP.height/2*(x-y));
         e.x      = x;
         e.y      = y;
         e.z      = z;
-        e.width  = step.width;
-        e.height = step.height;
+        e.width  = STEP.width;
+        e.height = STEP.height;
         return e;
     }
     

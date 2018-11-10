@@ -1,6 +1,6 @@
 package core;
 
-import core.manager.View.ViewAction;
+import core.manager.View.drawAction;
 import java.awt.Graphics;
 
 /*
@@ -17,5 +17,5 @@ public interface IGame
 {
     public void load();
     public void update();
-    public void draw(ViewAction v);
+    public void draw(drawAction v);
 }

@@ -21,17 +21,16 @@ public class DrawManager extends Manager
     public DrawManager(List<IGame> e)
     {
         super(e);
-        view = new View(e);
     }
     
     @Override
     protected void run()
     {
-        view.repaint();
+        if(view != null) view.repaint();
     }
-    
-    public void show()
+
+    public void setView(View v)
     {
-        view.show();
+        view = v;
     }
 }
