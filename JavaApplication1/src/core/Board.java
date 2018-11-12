@@ -1,11 +1,12 @@
 package core;
 
+import core.Entity.Button;
+import core.Entity.Element;
 import core.controls.MouseController;
-import core.manager.DrawManager;
-import core.manager.Core;
 import core.manager.View.drawAction;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,42 +15,67 @@ import java.util.List;
  */
 public class Board implements IGame
 {
-    public static final Dimension STEP = new Dimension(Data.QUAD_SIZE, Data.QUAD_SIZE/2);
     private int x;
     private int y;
     private int width;
     private int height;
     private Element origin;
     private List<Element> elements;
-    private MouseController mouse;
+    private List<Integer> first;
+    private List<Integer> second;
+    private List<Integer> third;
     
-    public Board(MouseController m, List<Element> e) 
+    public Board(List<Element> e) 
     {
-        mouse    = m;
         elements = e;
         x        = Data.WIN_WIDTH_2-Data.WIN_HEIGHT/2;
         y        = Data.WIN_HEIGHT_2-Data.WIN_HEIGHT/2;
         width    = Data.WIN_HEIGHT;
         height   = Data.WIN_HEIGHT;
         origin   = new Element();
-        origin.realX = x+width/2;
-        origin.realY = y+height-STEP.height/2;
-        origin.x = 0;
-        origin.y = 0;
-        origin.z = 0;
-        origin.width  = STEP.width;
-        origin.height = STEP.height;
+        origin.setRealX(x+width/2);
+        origin.setRealY(y+height-Data.STEP.height/2);
+        origin.setWidth(Data.STEP.width);
+        origin.setHeight(Data.STEP.height);
+        first   = new ArrayList();
+        second  = new ArrayList();
+        third   = new ArrayList();
     }
-
+    
+    public void sortByPlan()
+    {
+        first.clear();
+        second.clear();
+        third.clear();
+        for(int i=(elements.size()-1) ; i>=0 ; i--)
+        {
+            switch(elements.get(i).getVisibility())
+            {
+                case Data.VISIBLE_FIRST:
+                    first.add(i);
+                    break;
+                case Data.VISIBLE_SECOND:
+                    second.add(i);
+                    break;
+                case Data.VISIBLE_THIRD:
+                    third.add(i);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
     @Override
     public void load()
     {
-        elements.add(origin);
+        Button b = new Button(x,y, Data.STEP.width/2, Data.STEP.width/2);
+        //elements.add(b);
         for(int i=0 ; i<10 ; i++)
         {
             for(int j=0 ; j<10 ; j++)
             {
-                elements.add(getElementByAxis(i,j,0));
+                elements.add(createGridElement(i,j));
             }
         }
         for(Element i:elements)
@@ -61,50 +87,50 @@ public class Board implements IGame
     @Override
     public void update() 
     {
+        sortByPlan();
         for(Element e:elements)
         {
             e.update();
-            if(e.isClicked)
-            {
-                if(e.isSelected)
-                {
-                    //TEST
-                    e.depth += 10;
-                    //TEST
-                    e.unselected();
-                }
-                else
-                {
-                    e.selected();
-                }
-            }
-            e.reset();
         }
     }
     
     @Override
     public void draw(drawAction v)
     {
-        
-        v.setColor(Color.red);
-        v.drawPoint(origin.realX, origin.realY);
-        
-        for(int i=(elements.size()-1) ; i>=0 ; i--)
+        for(Integer i:third)
+        {
+            elements.get(i).draw(v);
+        }
+        for(Integer i:second)
+        {
+            elements.get(i).draw(v);
+        }
+        for(Integer i:first)
         {
             elements.get(i).draw(v);
         }
     }
     
-    public Element getElementByAxis(int x, int y, int z)
+    public int getRealX(int x, int y)
+    {
+        return origin.getRealX() + Data.STEP.width/2*(x-y);
+    }
+    
+    public int getRealY(int x, int y)
+    {
+        return origin.getRealY() - (Data.STEP.height*x) + (Data.STEP.height/2*(x-y));
+    }
+    
+    public Element createGridElement(int x, int y)
     {
         Element e = new Element();
-        e.realX  = origin.realX + STEP.width/2*(x-y);
-        e.realY  = origin.realY - (STEP.height*x) + (STEP.height/2*(x-y));
-        e.x      = x;
-        e.y      = y;
-        e.z      = z;
-        e.width  = STEP.width;
-        e.height = STEP.height;
+        e.setRealX(getRealX(x,y));
+        e.setRealY(getRealY(x,y));
+        e.setVisibility(Data.VISIBLE_FIRST);
+        e.setX(x);
+        e.setY(y);
+        e.setWidth(Data.STEP.width);
+        e.setHeight(Data.STEP.height);
         return e;
     }
     

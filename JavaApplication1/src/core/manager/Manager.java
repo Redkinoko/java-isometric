@@ -19,12 +19,9 @@ import javax.swing.Timer;
 public abstract class Manager implements ActionListener, IManager
 {
     protected Timer timer;
-    protected List<IGame> elements;
-    
-    public Manager(List<IGame> e)
+    public Manager()
     {
         timer = new Timer(Data.TICK, this);
-        elements = e;
     }
     
     public void start()

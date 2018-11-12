@@ -6,7 +6,7 @@
 package core.manager.View;
 
 import core.Data;
-import core.Element;
+import core.Entity.Element;
 import core.IGame;
 import core.controls.MouseController;
 import java.awt.Color;
@@ -28,14 +28,12 @@ public class View extends JPanel
     private int offSetY;
     private JFrame frame;
     private drawAction viewAction;
-    private MouseController mouse;
     
-    public View(drawAction va, MouseController m, List<IGame> draws)
+    public View(drawAction va, List<IGame> draws)
     {
         super();
         viewAction = va;
         drawables  = draws;
-        mouse      = m;
         offSetX    = 20;
         offSetY    = 50;
         frame      = new JFrame();
@@ -60,8 +58,6 @@ public class View extends JPanel
                 }
             }
         );
-        this.addMouseListener(mouse);
-        setBackground(Color.DARK_GRAY);
         setFrameSize(Data.WIN_WIDTH, Data.WIN_HEIGHT);
     }
     

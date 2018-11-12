@@ -18,9 +18,9 @@ import java.util.List;
 public class DrawManager extends Manager
 {
     private View view;
-    public DrawManager(List<IGame> e)
+    public DrawManager()
     {
-        super(e);
+        super();
     }
     
     @Override

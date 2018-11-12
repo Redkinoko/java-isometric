@@ -14,9 +14,11 @@ import java.util.List;
  */
 public class UpdateManager extends Manager
 {
+    private List<IGame> elements;
     public UpdateManager(List<IGame> e)
     {
-        super(e);
+        super();
+        elements    = e;
     }
     
     @Override

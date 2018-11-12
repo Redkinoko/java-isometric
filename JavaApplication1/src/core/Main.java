@@ -17,7 +17,7 @@ public class Main
 
     public static void main(String[] args) throws InterruptedException
     {
-        Core core   = new Core();
+        Core core = new Core();
         core.run();
     }
 }

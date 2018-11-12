@@ -6,11 +6,14 @@
 package core.manager;
 
 import core.Board;
-import core.Element;
+import core.Entity.Element;
 import core.IGame;
+import core.controls.KeyboardController;
 import core.controls.MouseController;
 import core.manager.View.View;
 import core.manager.View.drawAction;
+import java.awt.AWTEvent;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,7 @@ public class Core
 {
     public List<IGame>   items;
     public List<Element> elements;
+    public KeyboardController keyboard;
     public MouseController mouse;
     public DrawManager   drawer;
     public UpdateManager updater;
@@ -31,18 +35,25 @@ public class Core
     
     public Core()
     {
-        items    = new ArrayList();
-        elements = new ArrayList();
-        drawer   = new DrawManager(items);
-        updater  = new UpdateManager(items);
-        mouse    = new MouseController(elements);
-        board    = new Board(mouse, elements);
-        da       = new drawAction();
-        view     = new View(da, mouse, items);
+        items       = new ArrayList();
+        elements    = new ArrayList();
+        
+        drawer      = new DrawManager();
+        updater     = new UpdateManager(items);
+        
+        board       = new Board(elements);
+        da          = new drawAction();
+        view        = new View(da, items);
+        
+        keyboard    = new KeyboardController();
+        mouse       = new MouseController(elements, view);
     }
     
     public void run()
     {
+        Toolkit.getDefaultToolkit().addAWTEventListener(mouse,    AWTEvent.MOUSE_EVENT_MASK);
+        Toolkit.getDefaultToolkit().addAWTEventListener(mouse,    AWTEvent.MOUSE_MOTION_EVENT_MASK);
+        Toolkit.getDefaultToolkit().addAWTEventListener(keyboard, AWTEvent.KEY_EVENT_MASK);
         items.add(board);
         drawer.setView(view);
         view.load();
